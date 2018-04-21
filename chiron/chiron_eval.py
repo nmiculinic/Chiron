@@ -13,6 +13,7 @@ import sys
 import time
 import logging
 from tqdm import tqdm
+from typing import *
 
 import numpy as np
 import tensorflow as tf
@@ -62,7 +63,7 @@ def sparse2dense(predict_val):
     return predict_read, uniq_list
 
 
-def index2base(read):
+def index2base(read: Iterable[int]) -> str:
     """Transfer the number into dna base.
     The transfer will go through each element of the input int vector.
     Args:
