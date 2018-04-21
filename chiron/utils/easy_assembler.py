@@ -17,6 +17,7 @@ from itertools import groupby
 
 import numpy as np
 import six
+from typing import *
 from six.moves import range
 
 
@@ -206,8 +207,8 @@ def mc_decoding(logits, base_type, sample_n=300):
 ###############################################################################
 
 #########################Simple assembly method################################
-def simple_assembly(bpreads):
-    concensus = np.zeros([4, 1000])
+def simple_assembly(bpreads: List[str]) -> np.ndarray:
+    concensus = np.zeros([4, 1000])  # Base, position
     pos = 0
     length = 0
     census_len = 1000
@@ -218,7 +219,7 @@ def simple_assembly(bpreads):
         d = difflib.SequenceMatcher(None, bpreads[indx - 1], bpread)
         match_block = max(d.get_matching_blocks(), key=lambda x: x[2])
         disp = match_block[0] - match_block[1]
-        if disp + pos + len(bpreads[indx]) > census_len:
+        while disp + pos + len(bpreads[indx]) > census_len:
             concensus = np.lib.pad(concensus, ((0, 0), (0, 1000)),
                                    mode='constant', constant_values=0)
             census_len += 1000
@@ -228,7 +229,7 @@ def simple_assembly(bpreads):
     return concensus[:, :length]
 
 
-def add_count(concensus, start_indx, segment):
+def add_count(concensus: np.ndarray, start_indx: int, segment: str):
     base_dict = {'A': 0, 'C': 1, 'G': 2, 'T': 3, 'a': 0, 'c': 1, 'g': 2, 't': 3}
     if start_indx < 0:
         segment = segment[-start_indx:]
